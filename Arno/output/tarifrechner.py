@@ -49,7 +49,7 @@ def calc_Pxt(x, n, t, sex, tafel, zins, alpha, Bxt_value):
     return numerator / denominator
 
 def main():
-    wb = openpyxl.load_workbook("Tarifrechner_KLV_Eingabe.xlsx", data_only=True)
+    wb = openpyxl.load_workbook("Tarifrechner_KLV.xlsm", data_only=True)
     sheet = wb["Kalkulation"]
 
     # Eingabedaten (Zeilen 4..9 in Spalte B usw.)
