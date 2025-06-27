@@ -52,7 +52,7 @@ Die beiden Ansätze unterscheiden sich in **Automatisierungsgrad** und **Tool-St
 ```text
 dev/
 ├─ Arno/                 # Handwerklicher Workflow
-│  ├─ input/             # VBA-Module, Screenshot, Original-Excel
+│  ├─ input/             # Chat-Verlauf (nur Prompts), Screenshot, Original-Excel
 │  └─ output/            # Von ChatGPT generierter Python-Code
 ├─ Bartek/               # Industrieller Workflow
 │  ├─ input/             # Optimierte Prompts, Original-Excel
