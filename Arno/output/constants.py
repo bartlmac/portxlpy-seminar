@@ -1,0 +1,11 @@
+# constants.py
+
+RUND_LX = 16
+RUND_TX = 16
+RUND_DX = 16
+RUND_CX = 16
+RUND_NX = 16
+RUND_MX = 16
+RUND_RX = 16
+
+MAX_ALTER = 123

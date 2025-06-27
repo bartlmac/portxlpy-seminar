@@ -1,0 +1,9 @@
+# === Runtime dependencies ===
+pandas==2.2.2
+xlwings==0.30.12                  # benötigt nur von Bartek
+oletools==0.60.1                  # benötigt nur von Bartek
+
+# === Development / Quality ===
+pytest==8.2.2
+black==24.4.2
+ruff==0.4.2

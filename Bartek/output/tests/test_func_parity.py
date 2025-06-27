@@ -1,0 +1,29 @@
+# tests/test_func_parity.py
+
+import re
+import ast
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]  # …\davag\08
+sys.path.insert(0, str(ROOT))
+
+def extract_public_vba_functions(mod_dir):
+    vba_names = set()
+    for file in Path(mod_dir).glob("Mod_*.txt"):
+        content = file.read_text(encoding="utf-8")
+        for match in re.finditer(r'^\s*(Public)\s+(Function|Sub)\s+(\w+)', content, flags=re.MULTILINE | re.IGNORECASE):
+            vba_names.add(match.group(3))
+    return vba_names
+
+def extract_python_functions(py_path):
+    with open(py_path, "r", encoding="utf-8") as f:
+        tree = ast.parse(f.read(), filename=str(py_path))
+    return {node.name for node in tree.body if isinstance(node, ast.FunctionDef)}
+
+def test_function_parity():
+    vba_funcs = extract_public_vba_functions(mod_dir=".")
+    py_funcs = extract_python_functions(Path("basfunct.py"))
+
+    missing = sorted(vba_funcs - py_funcs)
+    assert not missing, f"Fehlende Python-Funktionen: {missing}"
