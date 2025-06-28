@@ -17,8 +17,8 @@ Ziel ist es, einen klassischen Excel-Tarifrechner der Lebensversicherung reprodu
 1. [Projektüberblick](#projektüberblick)  
 2. [Repository-Struktur](#repository-struktur)  
 3. [Workflows](#workflows)  
+   * [Arnos „handwerklicher“ Ansatz](#arnos-handwerklicher-ansatz)  
    * [Barteks „industrieller“ Ansatz](#barteks-industrieller-ansatz)  
-   * [Arnos „handwerklicher“ Ansatz *(Platzhalter)*](#arnos-handwerklicher-ansatz)  
 4. [Erste Schritte](#erste-schritte)  
 5. [Benutzung](#benutzung)  
 6. [Tests](#tests)  
@@ -66,6 +66,23 @@ dev/
 ---
 
 ## Workflows
+
+### Arnos „handwerklicher“ Ansatz
+
+*Ziel:* **Rapid Prototyping** – bei möglichst wenig Prompts und Nutzung des Reasoning-Modells o1.
+
+
+Idee: Da das Modell o1 keine Excel-Datei verarbeiten kann, werden die Bestandteile der Eingabedatei `Tarifrechner_KLV.xlsm` separat behandelt. Die Aufgabe wird in drei Schritte (plus einen 4. Schritt für einen Werteabgleich) zerlegt.
+
+| Schritt | Beschreibung | Chatprotokoll | Erzeugte Dateien | 
+| ------- | ------------ | ------------- | ---------------- |
+| 1       | Übersetze die Tafeln aus der Eingabedatei in eine XML-Datei. Dieses Format lässt sich gut in Python verarbeiten. Dazu wird der komplette Inhalt des Tabellenblattes `Tafeln` aus der Eingabdatei per Copy&Paste an ChatGPT übergeben. | Chat 1 - Excel_nach_XML_konvertieren | `Tafeln.xml` |
+| 2       | Übersetze den VBA-Code, der in der Eingabedatei enthalten ist, nach Python. Der VBA-Code besteht aus insgesamt drei Modulen (`mConstants`, `mBarwerte` und `mGwerte`), die jeweils einzeln in Textform an ChatGTP übergeben werden. Wichtig ist, dass der erzeugte Python Code die gleichen Rundungsregeln verwendet wie Excel. | Chat 2 - VBA_nach_Python_übersetzen | `constants.py` `barwerte.py` `gwerte.py` |
+| 3       | Es bleibt noch die Aufgabe, das Tabellenblatt `Kalkulation`, das als User-Inferface des Excel-Rechners dient, in Python abzubilden. In diesem Rapid-Prototyping Ansatz möchten wir ein Python-Programm erzeugen, das die Eingabewerte aus dem Excel-Tabellenblat ausliest, dann die Berechnungen in Python durchführt und schließlich die Ergebnisse auf stdio ausgibt. Da das verwendete Modell kein Excel verarbeiten kann, geben wir ChatGPT zunächst einen Screenshot von dem Tabellenblatt `Kalkulation` und die verwendeten Formeln, die wir aus dem Excel-Zellen herauskopieren und als Text übergeben. ChatGPT braucht ein wenig Hilfe, um das gewünschte Ergebnis zu liefern, wie aus dem Chatprotokoll ersichtlich ist. | Chat 3 - Excel-Tarifrechner_nach_Python_mit_QS (Prompts 1 bis 9) | `verlaufswerte.py` `tarifrechner.py` (Hauptprogramm) |
+| 4       | Erzeuge ein Programm, das die mit Python berechneten Werte mit den Werten des Excel-Rechners vergleicht. |  Chat 3 - Excel-Tarifrechner_nach_Python_mit_QS (Prompts 10 bis 13) | `compare_results.py` (Hauptprogramm) |
+
+
+---
 
 ### Barteks „industrieller“ Ansatz
 
@@ -134,16 +151,6 @@ R1 --> E1
 | 7       | `run_calc.py`      | CLI-Runner mit Argumenten für Datei‑ und Funktionswahl   | ✅ einsatzbereit            |
 
 
-### Arnos „handwerklicher“ Ansatz
-
-> **Platzhalter – folgt, sobald Arno seine Beschreibung geliefert hat.**
-
-```text
-<!-- TODO: Arno beschreibt hier seinen Screenshot‑basierten Workflow,
-     inkl. Lessons Learned & Code‑Snippets. -->
-```
-
----
 
 ## Erste Schritte
 
@@ -164,14 +171,18 @@ pip install -r requirements.txt
 
 ## Benutzung
 
+### CLI-Runner von Arno
+```bash
+python dev/Arno/output/tarifrechner.py
+python dev/Arno/output/compare_results.py
+```
+
+
 ### CLI-Runner von Bartek
 ```bash
 python dev/Bartek/output/run_calc.py   --funcs Bxt
 # → {"Bxt": 0.04226001029372411, "BJB": "not yet implemented", "VSt": "not yet implemented", "Rnt": "not yet implemented", "VBar": "not yet implemented", "REBar": "not yet implemented"}
 ```
-
-### CLI-Runner von Arno
-*noch offen*
 
 
 ---
@@ -254,6 +265,6 @@ Alle Workflows im Projekt nutzen **eine zentrale virtuelle Umgebung** und **ein 
 
 **Kontakt:**  
 *Bartlomiej Maciaga* – <bartlomiej.maciaga@hotmail.com>  
-*Dr. Arno Rasch*      – <arno@example.com>  
+*Dr. Arno Rasch*      – <arno.rasch@gmx.de>  
 
 Fragen oder Feedback gerne als GitHub‑Issue oder per E‑Mail.
