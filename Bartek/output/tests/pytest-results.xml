@@ -1,10 +1,49 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="4" time="3.351" timestamp="2025-06-30T08:58:57.190818+02:00" hostname="DESKTOP-GCAF0SF"><testcase classname="output.tests.test_bxt" name="test_bxt_reference_case" time="1.956"><system-out>--------------------------------- Captured Out ---------------------------------
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="3" time="2.464" timestamp="2025-06-30T09:15:47.391792+02:00" hostname="DESKTOP-GCAF0SF"><testcase classname="output.tests.test_bxt" name="test_bxt_reference_case" time="1.475"><system-out>--------------------------------- Captured Out ---------------------------------
+Bxt-Referenzfall: Ergebnis=0.04226001 | Erwartet=0.04226001
 
-</system-out></testcase><testcase classname="output.tests.test_bxt" name="test_dummy_print" time="0.003"><system-out>--------------------------------- Captured Out ---------------------------------
-Hallo XML-Report!
+</system-out></testcase><testcase classname="output.tests.test_data_roundtrip" name="test_csv_columns" time="0.055"><system-out>--------------------------------- Captured Out ---------------------------------
+var.csv: erwartet 2 Spalten | gefunden 2
+tarif.csv: erwartet 2 Spalten | gefunden 2
+grenzen.csv: erwartet 2 Spalten | gefunden 2
+tafeln.csv: erwartet 5 Spalten | gefunden 5
 
-</system-out></testcase><testcase classname="output.tests.test_data_roundtrip" name="test_csv_columns" time="0.096"><system-out>--------------------------------- Captured Out ---------------------------------
+</system-out></testcase><testcase classname="output.tests.test_func_parity" name="test_function_parity" time="0.010"><system-out>--------------------------------- Captured Out ---------------------------------
+VBA-Funktionen:   16
+Python-Funktionen:26
 
-</system-out></testcase><testcase classname="output.tests.test_func_parity" name="test_function_parity" time="0.015"><system-out>--------------------------------- Captured Out ---------------------------------
+VBA  ↔  Python-Funktion (Status)
+--------------------------------------
+Act_Abzugsglied           → OK
+Act_Altersberechnung      → OK
+Act_Cx                    → OK
+Act_Dx                    → OK
+Act_Mx                    → OK
+Act_Nx                    → OK
+Act_Rx                    → OK
+Act_ag_k                  → OK
+Act_ax_k                  → OK
+Act_axn_k                 → OK
+Act_lx                    → OK
+Act_nGrAx                 → OK
+Act_nGrEx                 → OK
+Act_nax_k                 → OK
+Act_qx                    → OK
+Act_tx                    → OK
+
+Zusätzliche Python-Funktionen (nicht in VBA):
+  • _key
+  • _round
+  • _tafel_col
+  • v_Cx
+  • v_Dx
+  • v_Mx
+  • v_Nx
+  • v_Rx
+  • v_lx
+  • v_tx
+
+VBA-Gesamt   : 16
+Python-Gesamt: 26
+
 
 </system-out></testcase></testsuite></testsuites>

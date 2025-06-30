@@ -25,5 +25,26 @@ def test_function_parity():
     vba_funcs = extract_public_vba_functions(mod_dir=".")
     py_funcs = extract_python_functions(Path("basfunct.py"))
 
+    # -----------------------------------------------------------
+    # Prints für den XML-Report
+    # -----------------------------------------------------------
+    print(f"VBA-Funktionen:   {len(vba_funcs)}")
+    print(f"Python-Funktionen:{len(py_funcs)}")
+
     missing = sorted(vba_funcs - py_funcs)
+    extra   = sorted(py_funcs - vba_funcs)
+
+    print(f"\nVBA  ↔  Python-Funktion (Status)\n" + "-" * 38)
+    for name in sorted(vba_funcs):
+        status = "OK" if name in py_funcs else "MISSING"
+        print(f"{name:<25s} → {status}")
+
+    if extra:
+        print("\nZusätzliche Python-Funktionen (nicht in VBA):")
+        for name in extra:
+            print("  •", name)
+
+    print(f"\nVBA-Gesamt   : {len(vba_funcs)}")
+    print(f"Python-Gesamt: {len(py_funcs)}\n")
+
     assert not missing, f"Fehlende Python-Funktionen: {missing}"
