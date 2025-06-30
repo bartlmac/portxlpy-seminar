@@ -260,7 +260,7 @@ h1 {
                 <li>output.tests.test_bxt
                 <ul>
                     
-                    <li class="outcome outcome-passed"><a href="#ca8a37fd-65af-4713-b1b8-22acd390d65f">test_bxt_reference_case</a></li>
+                    <li class="outcome outcome-passed"><a href="#00e92706-809d-44e1-8545-3b37aa40df0f">test_bxt_reference_case</a></li>
                     
                 </ul>
                 </li>
@@ -268,7 +268,7 @@ h1 {
                 <li>output.tests.test_data_roundtrip
                 <ul>
                     
-                    <li class="outcome outcome-passed"><a href="#dfb597fb-7944-4cbb-854c-489686f1414b">test_csv_columns</a></li>
+                    <li class="outcome outcome-passed"><a href="#8dc55a53-9307-4a53-a004-75bbfcbe8178">test_csv_columns</a></li>
                     
                 </ul>
                 </li>
@@ -276,7 +276,7 @@ h1 {
                 <li>output.tests.test_func_parity
                 <ul>
                     
-                    <li class="outcome outcome-passed"><a href="#2ff21b31-71d6-483f-8dea-2beae7715e57">test_function_parity</a></li>
+                    <li class="outcome outcome-passed"><a href="#637552ec-da45-4f3a-8908-662c367e6435">test_function_parity</a></li>
                     
                 </ul>
                 </li>
@@ -310,13 +310,13 @@ h1 {
 
     <div class="testsuite">
         <h2>Test Suite: pytest</h2>
-        <a id="2281a3f0-8810-4642-8389-354b450c4e54"></a>
+        <a id="76050968-3c81-4912-bc4d-281422b6514b"></a>
         
         
         <h3>Results</h3>
         <table class="proplist">
             <tr>
-                <th>Duration</th><td>2.464 sec</td>
+                <th>Duration</th><td>2.691 sec</td>
             </tr>
             <tr>
                 <th>Tests</th><td>3</td>
@@ -334,11 +334,11 @@ h1 {
                 <div class="testcases">
                 
                     <div class="test outcome outcome-passed">
-                        <a id="ca8a37fd-65af-4713-b1b8-22acd390d65f"></a>
+                        <a id="00e92706-809d-44e1-8545-3b37aa40df0f"></a>
                         <table class="proplist">
                             <tr><th>Test case:</th><td><b>test_bxt_reference_case</b></td></tr>
                             <tr><th>Outcome:</th><td>Passed</td></tr>
-                            <tr><th>Duration:</th><td>1.475 sec</td></tr>
+                            <tr><th>Duration:</th><td>1.487 sec</td></tr>
                         
                         
                         </table>
@@ -366,11 +366,11 @@ Bxt-Referenzfall: Ergebnis=0.04226001 | Erwartet=0.04226001
                 <div class="testcases">
                 
                     <div class="test outcome outcome-passed">
-                        <a id="dfb597fb-7944-4cbb-854c-489686f1414b"></a>
+                        <a id="8dc55a53-9307-4a53-a004-75bbfcbe8178"></a>
                         <table class="proplist">
                             <tr><th>Test case:</th><td><b>test_csv_columns</b></td></tr>
                             <tr><th>Outcome:</th><td>Passed</td></tr>
-                            <tr><th>Duration:</th><td>0.055 sec</td></tr>
+                            <tr><th>Duration:</th><td>0.041 sec</td></tr>
                         
                         
                         </table>
@@ -401,11 +401,11 @@ tafeln.csv: erwartet 5 Spalten | gefunden 5
                 <div class="testcases">
                 
                     <div class="test outcome outcome-passed">
-                        <a id="2ff21b31-71d6-483f-8dea-2beae7715e57"></a>
+                        <a id="637552ec-da45-4f3a-8908-662c367e6435"></a>
                         <table class="proplist">
                             <tr><th>Test case:</th><td><b>test_function_parity</b></td></tr>
                             <tr><th>Outcome:</th><td>Passed</td></tr>
-                            <tr><th>Duration:</th><td>0.01 sec</td></tr>
+                            <tr><th>Duration:</th><td>0.014 sec</td></tr>
                         
                         
                         </table>
@@ -417,7 +417,7 @@ tafeln.csv: erwartet 5 Spalten | gefunden 5
                         
                         <div class="stdout"><i>Stdout</i><br>
                             <pre>--------------------------------- Captured Out ---------------------------------
-VBA-Funktionen:   16
+VBA-Funktionen:   23
 Python-Funktionen:26
 
 VBA  ↔  Python-Funktion (Status)
@@ -438,20 +438,24 @@ Act_nGrEx                 → OK
 Act_nax_k                 → OK
 Act_qx                    → OK
 Act_tx                    → OK
+v_Cx                      → OK
+v_Dx                      → OK
+v_Mx                      → OK
+v_Nx                      → OK
+v_Rx                      → OK
+v_lx                      → OK
+v_tx                      → OK
 
 Zusätzliche Python-Funktionen (nicht in VBA):
   • _key
   • _round
   • _tafel_col
-  • v_Cx
-  • v_Dx
-  • v_Mx
-  • v_Nx
-  • v_Rx
-  • v_lx
-  • v_tx
 
-VBA-Gesamt   : 16
+Ignorierte VBA-Cache-Funktionen:
+  • CreateCacheKey
+  • InitializeCache
+
+VBA-Gesamt   : 23
 Python-Gesamt: 26
 
 

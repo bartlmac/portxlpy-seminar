@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="3" time="2.464" timestamp="2025-06-30T09:15:47.391792+02:00" hostname="DESKTOP-GCAF0SF"><testcase classname="output.tests.test_bxt" name="test_bxt_reference_case" time="1.475"><system-out>--------------------------------- Captured Out ---------------------------------
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="3" time="2.691" timestamp="2025-06-30T09:39:45.789238+02:00" hostname="DESKTOP-GCAF0SF"><testcase classname="output.tests.test_bxt" name="test_bxt_reference_case" time="1.487"><system-out>--------------------------------- Captured Out ---------------------------------
 Bxt-Referenzfall: Ergebnis=0.04226001 | Erwartet=0.04226001
 
-</system-out></testcase><testcase classname="output.tests.test_data_roundtrip" name="test_csv_columns" time="0.055"><system-out>--------------------------------- Captured Out ---------------------------------
+</system-out></testcase><testcase classname="output.tests.test_data_roundtrip" name="test_csv_columns" time="0.041"><system-out>--------------------------------- Captured Out ---------------------------------
 var.csv: erwartet 2 Spalten | gefunden 2
 tarif.csv: erwartet 2 Spalten | gefunden 2
 grenzen.csv: erwartet 2 Spalten | gefunden 2
 tafeln.csv: erwartet 5 Spalten | gefunden 5
 
-</system-out></testcase><testcase classname="output.tests.test_func_parity" name="test_function_parity" time="0.010"><system-out>--------------------------------- Captured Out ---------------------------------
-VBA-Funktionen:   16
+</system-out></testcase><testcase classname="output.tests.test_func_parity" name="test_function_parity" time="0.014"><system-out>--------------------------------- Captured Out ---------------------------------
+VBA-Funktionen:   23
 Python-Funktionen:26
 
 VBA  ↔  Python-Funktion (Status)
@@ -29,20 +29,24 @@ Act_nGrEx                 → OK
 Act_nax_k                 → OK
 Act_qx                    → OK
 Act_tx                    → OK
+v_Cx                      → OK
+v_Dx                      → OK
+v_Mx                      → OK
+v_Nx                      → OK
+v_Rx                      → OK
+v_lx                      → OK
+v_tx                      → OK
 
 Zusätzliche Python-Funktionen (nicht in VBA):
   • _key
   • _round
   • _tafel_col
-  • v_Cx
-  • v_Dx
-  • v_Mx
-  • v_Nx
-  • v_Rx
-  • v_lx
-  • v_tx
 
-VBA-Gesamt   : 16
+Ignorierte VBA-Cache-Funktionen:
+  • CreateCacheKey
+  • InitializeCache
+
+VBA-Gesamt   : 23
 Python-Gesamt: 26
 
 
