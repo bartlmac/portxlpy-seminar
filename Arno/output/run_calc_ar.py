@@ -1,4 +1,11 @@
 import openpyxl
+import os
+from pathlib import Path
+
+THIS_DIR    = Path(__file__).resolve().parent      # …/Arno/output
+PROJECT_DIR = THIS_DIR.parent                      # …/Arno
+INPUT_DIR   = PROJECT_DIR / "input"
+os.chdir(str(THIS_DIR))                            # CWD = output
 
 from barwerte import act_ngr_ax, act_axn_k
 from gwerte import act_dx
@@ -49,7 +56,8 @@ def calc_Pxt(x, n, t, sex, tafel, zins, alpha, Bxt_value):
     return numerator / denominator
 
 def main():
-    wb = openpyxl.load_workbook("Tarifrechner_KLV.xlsm", data_only=True)
+    excel_file = INPUT_DIR / "Tarifrechner_KLV.xlsm"
+    wb = openpyxl.load_workbook(excel_file, data_only=True)
     sheet = wb["Kalkulation"]
 
     # Eingabedaten (Zeilen 4..9 in Spalte B usw.)

@@ -1,10 +1,14 @@
 # run_calc.py (korrigierte Version mit robustem Casting)
 
+import os
 import argparse
 import pandas as pd
 import json
 from importlib import import_module
 from pathlib import Path
+
+THIS_DIR = Path(__file__).resolve().parent   # …/Bartek/output
+os.chdir(THIS_DIR)                           # CSV-Dateien immer gefunden
 
 ALL_FUNCS = ["Bxt", "BJB", "VSt", "Rnt", "VBar", "REBar"]
 

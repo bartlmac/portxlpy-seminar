@@ -12,3 +12,4 @@ def test_bxt_reference_case():
     result = Bxt(vs=100_000, age=40, sex="M", n=30, t=20, zw=12, tarif="KLV")
     expected = 0.04226001
     assert abs(result - expected) < 1e-8, f"Bxt() = {result}, erwartet {expected}"
+
