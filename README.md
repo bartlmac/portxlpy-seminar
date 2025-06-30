@@ -1,6 +1,6 @@
 # Excel-Tarifrechner → Python-Rechner (LLM Proof of Concept)
 
-*ver. 0.01*
+*ver. 0.02 (2025-06-30)*
 
 Dieses Repository begleitet das Video / Webinar der DAV-Arbeitsgruppe  
 
@@ -21,7 +21,7 @@ Ziel ist es, einen klassischen Excel-Tarifrechner der Lebensversicherung reprodu
    * [Barteks „industrieller“ Ansatz](#barteks-industrieller-ansatz)  
 4. [Erste Schritte](#erste-schritte)  
 5. [Benutzung](#benutzung)  
-6. [Tests](#tests)  
+6. [Tests & Berichte](#tests--berichte)  
 7. [Mitwirken](#mitwirken)  
 8. [Lizenz](#lizenz)
 
@@ -157,7 +157,9 @@ R1 --> E1
 ### Voraussetzungen
 * Python ≥ 3.11  
 * Git, Make (optional)  
-* Abhängigkeiten: siehe `requirements.txt` (pandas, xlwings, oletools, pytest, ruff, black, …)
+* Abhängigkeiten: siehe `requirements.txt`  
+  (pandas, xlwings, oletools, openpyxl, pytest;  
+  *optional:* junit2html, pytest-html)
 
 ### Installation
 ```bash
@@ -173,28 +175,47 @@ pip install -r requirements.txt
 
 ### CLI-Runner von Arno
 ```bash
-python dev/Arno/output/tarifrechner.py
-python dev/Arno/output/compare_results.py
-```
+# Hauptberechnung
+python Arno/output/run_calc_ar.py
 
+# Werte-Gegenprobe Excel ↔ Python (optional: über pytest)
+python Arno/output/compare_results.py
+```
 
 ### CLI-Runner von Bartek
 ```bash
-python dev/Bartek/output/run_calc.py   --funcs Bxt
-# → {"Bxt": 0.04226001029372411, "BJB": "not yet implemented", "VSt": "not yet implemented", "Rnt": "not yet implemented", "VBar": "not yet implemented", "REBar": "not yet implemented"}
+# Funktionsweise wählbar mit --funcs
+python Bartek/output/run_calc_ba.py --funcs Bxt
 ```
 
 
 ---
 
-## Tests
+## Tests & Berichte
 
-Aktuell gibt es nur lokale Tests (getrennt für Arno und Bartek). Um die Tests auszuführen, bitte ins entsprechende Unterverzeichnis wechseln und dort pytest aufrufen.
-
+### Lokal ausführen
 ```bash
-pytest -q
+# Arno
+cd Arno/output && pytest -q
+
+# Bartek
+cd Bartek/output && pytest -q
 ```
-Alle Smoke- & Regressions-Tests müssen **grün** durchlaufen. CI-Workflows (GitHub Actions) prüfen zusätzlich Black‑Format und Ruff‑Lint.
+* Terminal bleibt dank `-q` aufgeräumt (nur „passed/failed“).  
+* Ein JUnit-XML landet automatisch unter `output/tests/pytest-results.xml`  
+  – inklusive aller Vergleichs-Ausgaben im `<system-out>`-Block.
+
+### Optionales HTML-Dashboard
+```bash
+pip install junit2html           # einmalig oder per requirements.txt
+junit2html tests/pytest-results.xml tests/report.html
+```
+
+Oder (schöner) direkt über pytest-funktionalität beim Testlauf:
+```bash
+pip install pytest-html          # einmalig oder per requirements.txt
+pytest --html=output/tests/report.html --self-contained-html
+```
 
 ---
 
