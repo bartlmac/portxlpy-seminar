@@ -91,7 +91,7 @@ Idee: Da das Modell o1 keine Excel-Datei verarbeiten kann, werden die Bestandtei
 ``` mermaid
 flowchart TD
 
-subgraph Excel-Dump and Preprocessing
+subgraph Excel-Dump
     A1[excel_to_text.py<br>Zellen & Bereiche → CSV]
     A2[vba_to_text.py<br>VBA-Module → TXT]
     A3[data_extract.py<br>var.csv • tarif.csv • tafeln.csv]
@@ -115,7 +115,7 @@ subgraph Code-Portierung
     D3 --> R1
 end
 
-subgraph Ausfuehrungsebene
+subgraph Ausführungsebene
     E1[run_calc.py<br>CLI-Runner]
 end
 
