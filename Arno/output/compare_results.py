@@ -1,5 +1,15 @@
 import openpyxl
 
+import os
+from pathlib import Path
+
+THIS_DIR   = Path(__file__).resolve().parent        # …/Arno/output
+INPUT_DIR  = THIS_DIR.parent / "input"              # …/Arno/input
+os.chdir(str(THIS_DIR))                            # CWD = output
+
+# Flag, das eine gefundene Abweichung signalisiert
+DIFF_FOUND = False
+
 from barwerte import act_ngr_ax, act_axn_k
 from gwerte import act_dx
 
@@ -81,10 +91,30 @@ def compare_values(label, excel_value, python_value):
     print(f"{label:15s}: Excel={excel_val_float:12.8f}, "
           f"Python={python_val_float:12.8f}, "
           f"Diff={diff:12.8f} => {ok_str}")
+    
+    # True  = alles ok, False = Abweichung
+    if diff >= DIFF_TOL:
+        global DIFF_FOUND
+        DIFF_FOUND = True
+
+    return diff < DIFF_TOL
 
 
-def main():
-    wb = openpyxl.load_workbook("Tarifrechner_KLV.xlsm", data_only=True)
+def main() -> bool:
+
+    """
+    Führt den Excel-gegen-Python-Vergleich durch.
+
+    Rückgabe:
+        True  – wenn keinerlei Abweichungen gefunden wurden  
+        False – wenn mindestens eine Differenz existiert
+    """
+
+    global DIFF_FOUND
+    DIFF_FOUND = False
+
+    wb_path = INPUT_DIR / "Tarifrechner_KLV.xlsm"
+    wb = openpyxl.load_workbook(wb_path, data_only=True)
     sheet = wb["Kalkulation"]
 
     # Eingabeparameter (Beispiel: Zeilen 4..9 in Spalte B usw.)
@@ -200,5 +230,9 @@ def main():
 
     wb.close()
 
+    # Rückgabe True = alle Vergleiche ok, sonst False
+    return not DIFF_FOUND 
+
 if __name__ == "__main__":
-    main()
+    import sys
+    sys.exit(0 if main() else 1)
