@@ -176,7 +176,7 @@ pip install -r requirements.txt
 ### CLI-Runner von Arno
 ```bash
 # Hauptberechnung
-python Arno/output/run_calc_ar.py
+python Arno/output/tarifrechner.py
 
 # Werte-Gegenprobe Excel ↔ Python (optional: über pytest)
 python Arno/output/compare_results.py
@@ -185,7 +185,7 @@ python Arno/output/compare_results.py
 ### CLI-Runner von Bartek
 ```bash
 # Funktionsweise wählbar mit --funcs
-python Bartek/output/run_calc_ba.py --funcs Bxt
+python Bartek/output/run_calc.py --funcs Bxt
 ```
 
 
