@@ -1,6 +1,5 @@
 ## ✨ Kurzfassung
 * **Pfad‑Refactor** – Skripte laufen nun von jedem Arbeits­verzeichnis (`Path(__file__)` + `os.chdir`)
-* **Skript‑Renames** – `run_calc_ba.py` (Bartek) / `run_calc_ar.py` (Arno)
 * **Pytest‑Integration** – JUnit‑XML unter `*/output/tests/pytest-results.xml`, optionaler HTML‑Report
 * **Tests**
   * **Arno** – Excel‑vs‑Python‑Vergleich, DIFF‑Logs im XML
