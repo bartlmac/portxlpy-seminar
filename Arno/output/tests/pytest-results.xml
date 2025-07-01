@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.988" timestamp="2025-06-30T13:03:56.834981+02:00" hostname="DESKTOP-GCAF0SF"><testcase classname="output.tests.test_compare_results" name="test_compare_results_no_diff" time="0.235"><system-out>--------------------------------- Captured Out ---------------------------------
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.998" timestamp="2025-06-30T13:10:54.155744+02:00" hostname="DESKTOP-GCAF0SF"><testcase classname="output.tests.test_compare_results" name="test_compare_results_no_diff" time="0.216"><system-out>--------------------------------- Captured Out ---------------------------------
 === Vergleich: Beitragswerte ===
 Bxt            : Excel=  0.04226001, Python=  0.04226001, Diff=  0.00000000 =&gt; OK
 BJB            : Excel=4226.00102937, Python=4226.00102937, Diff=  0.00000000 =&gt; OK
