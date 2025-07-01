@@ -1,44 +1,57 @@
 ## ✨ Kurzfassung
-* **Pfad‑Refactor** – Skripte laufen nun von jedem Arbeits­verzeichnis (`Path(__file__)` + `os.chdir`)
-* **Pytest‑Integration** – JUnit‑XML unter `*/output/tests/pytest-results.xml`, optionaler HTML‑Report
-* **Tests**
-  * **Arno** – Excel‑vs‑Python‑Vergleich, DIFF‑Logs im XML
-  * **Bartek** – Funktions‑Parity inkl. Cache‑Ausnahme, Dummy‑CSV‑Roundtrip
-* **CI/Hilfsfiles** – neues `requirements.txt`, `.gitignore` filtert XML/HTML, README v0.02
+* **Dev‑Container** – `.devcontainer/` (Dockerfile + devcontainer.json)
+* **Docker‑Workflow** – zweistufiges Dockerfile + GH Action `build-docker.yml`
+* **Seminar‑Image** – CI baut und veröffentlicht bei Tags `seminar-*` nach GHCR
+* **Pfad‑Fix** – `gwerte.py` nutzt jetzt absoluten Pfad für `Tafeln.xml`
+* **Tests** – 4 ✓ (Bartek 3 / Arno 1); Reports per `.gitignore` ausgeschlossen
+* **.gitignore** – ignoriert `**/output/tests/{pytest-results.xml,report.html}`
+* **README** – neuer Abschnitt *„VS Code Dev‑Container Workflow“* + aktualisierte CLI‑Beispiele
 
 ---
 
 ## ✅ Was wurde geändert
+
 | Bereich | Änderung |
 |---------|----------|
-| **Arno**   | Pfad‑Utility, Rückgabewert `compare_results.main()`, Autouse‑Fixture, DIFF‑Prints |
-| **Bartek** | Autouse‑Fixture, Tabelle in `test_func_parity`, Cache‑Dokumentation |
-| **Root**   | `requirements.txt` (pandas, openpyxl, xlwings, oletools, pytest, junit2html, pytest-html) |
-| **Docs**   | README aktualisiert (CLI + Tests & Reports) |
-| **Sonstiges** | `.gitignore` ignoriert Test‑Artefakte |
+| **Root** | `.devcontainer/`, zweistufiges **Dockerfile**, `.github/workflows/build-docker.yml`, `.gitignore` |
+| **Arno** | `gwerte.py` – Default‑Pfad & relativer Fallback für `Tafeln.xml` |
+| **Tests** | alle 4 Tests grün; Reports landen wieder in `*/output/tests/` |
+| **Docs** | README um Dev‑Container‑Anleitung & Docker‑Tag‑Workflow erweitert |
 
 ---
 
-## 🔍 Test / Verify
+## 🔍 Verify / Smoke‑Tests
 
 ```bash
-# Arno
-cd Arno/output && pytest -q
+# 1 Container lokal bauen
+docker build -t portxlpy:local .
 
-# Bartek
-cd Bartek/output && pytest -q
+# 2 Schnelltest – CLI Runner
+docker run --rm portxlpy:local --help            # zeigt Usage
 
-# Optionaler HTML‑Report
-junit2html output/tests/pytest-results.xml output/tests/report.html
-start output/tests/report.html   # macOS: open, Linux: xdg-open
+# 3 PyTests im Container
+docker run --rm portxlpy:local pytest -q         # 4 passed
 ```
+
+### Codespaces‑Check
+
+1. **Codespace erstellen** → Branch `docker-seminar-setup` wählen  
+2. Beim Öffnen startet der Dev‑Container automatisch.  
+3. Terminal in Codespace:  
+   ```bash
+   pytest -q     # 4 passed
+   ```
 
 ---
 
 ## 📝 Review‑Checkliste
-- [ ] `pytest` grün unter Windows **und** Linux  
-- [ ] XML‑Pfad korrekt (`output/tests/...`)  
-- [ ] README‑Schritte funktionieren  
-- [ ] Keine Berichte oder .xlsm-Dateien mit‑committet  
+- [ ] Dev‑Container (VS Code & Codespaces) startet & Tests grün  
+- [ ] GH Action „Build & Push Seminar Image“ grün  
+- [ ] `git status` sauber – keine Reports mehr getrackt  
+- [ ] README‑Schritte funktionieren (Clone → Reopen in Container → PyTest)  
+- [ ] Release‑Tag `seminar-YYYYMM` baut Image & pusht nach GitHub Container Registry  
+
+---
+
 
 *Danke fürs Review 🙏*
