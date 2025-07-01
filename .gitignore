@@ -13,5 +13,5 @@ Thumbs.db
 
 # ───────── Test-Artefakte / Reports ─────────
 # JUnit-XML und HTML-Berichte unter output/tests/
-*/output/tests/*.xml
+*/output/tests/pytest-results.xml
 */output/tests/*.html

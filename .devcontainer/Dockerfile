@@ -10,16 +10,18 @@ FROM python:3.11-slim
 WORKDIR /app
 ENV PYTHONPATH=/app
 
-# ---- NEU: installierte Pakete rüberkopieren ----
+# 1) Python-Pakete aus Build-Stage übernehmen
 COPY --from=builder /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
-# -----------------------------------------------
+
+# 2) Git für VS-Code nachinstallieren  << NEU >>
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/*
 
 # ---------- Projektdateien ----------
-# Bartek-Workflow
 COPY Bartek/output /app/Bartek/output
 COPY Bartek/input  /app/Bartek/input
-# Arno-Workflow
 COPY Arno/output   /app/Arno/output
 COPY Arno/input    /app/Arno/input
 

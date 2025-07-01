@@ -1,0 +1,17 @@
+{
+    "name": "portxlpy seminar",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "context": ".."
+    },
+    "extensions": [
+      "ms-python.python",
+      "esbenp.prettier-vscode"
+    ],
+    "settings": {
+      "python.defaultInterpreterPath": "/usr/local/bin/python"
+    },
+    "postCreateCommand": "pytest -q || true",
+    "remoteUser": "root"
+  }
+  
