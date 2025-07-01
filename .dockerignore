@@ -1,0 +1,9 @@
+# ignorieren wir alles, was das Image unnötig aufbläht
+.git
+.vscode
+.venv
+__pycache__/
+*.py[cod]
+*.log
+*.png
+*.pdf
