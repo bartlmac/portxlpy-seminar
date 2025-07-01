@@ -1,3 +1,6 @@
+from pathlib import Path
+THIS_DIR  = Path(__file__).resolve().parent
+
 import xml.etree.ElementTree as ET
 from datetime import date
 from decimal import Decimal, ROUND_HALF_UP
@@ -45,7 +48,7 @@ def initialize_cache():
 def create_cache_key(art, alter, sex, tafel, zins, geb_jahr, rentenbeginnalter, schicht):
     return f"{art}_{alter}_{sex}_{tafel}_{zins}_{geb_jahr}_{rentenbeginnalter}_{schicht}"
 
-def _parse_tafeln_xml(xml_file="Tafeln.xml"):
+def _parse_tafeln_xml(xml_file: str | Path = THIS_DIR / "Tafeln.xml"):
     tree = ET.parse(xml_file)
     root = tree.getroot()
 
@@ -74,7 +77,7 @@ def _parse_tafeln_xml(xml_file="Tafeln.xml"):
 def _ensure_tafeln_data_loaded():
     global TAFELN_DATA
     if not TAFELN_DATA:  # noch leer
-        TAFELN_DATA = _parse_tafeln_xml("Tafeln.xml")
+        TAFELN_DATA = _parse_tafeln_xml()
 
 ##############################################################################
 # WERTE AUS TAFELN AUSLESEN
