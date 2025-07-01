@@ -10,6 +10,11 @@ FROM python:3.11-slim
 WORKDIR /app
 ENV PYTHONPATH=/app
 
+# ---- NEU: installierte Pakete rüberkopieren ----
+COPY --from=builder /root/.local /root/.local
+ENV PATH=/root/.local/bin:$PATH
+# -----------------------------------------------
+
 # ---------- Projektdateien ----------
 # Bartek-Workflow
 COPY Bartek/output /app/Bartek/output
@@ -19,4 +24,5 @@ COPY Arno/output   /app/Arno/output
 COPY Arno/input    /app/Arno/input
 
 # --------- Default Entry Point -------
-ENTRYPOINT ["python", "src/run_calc.py"]
+ENTRYPOINT ["python", "Bartek/output/run_calc.py"]
+    
