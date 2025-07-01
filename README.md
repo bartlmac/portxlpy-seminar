@@ -228,7 +228,7 @@ Pull Requests sind willkommen! Bitte beachte:
 
 ---
 
-## Appendix: Arbeiten mit der Python-Umgebung (`.venv`) und `requirements.txt`
+## Appendix 1: Arbeiten mit der Python-Umgebung (`.venv`) und `requirements.txt`
 
 ### Projekt lokal starten
 
@@ -276,6 +276,120 @@ Pull Requests sind willkommen! Bitte beachte:
 
 **Hinweis:**  
 Alle Workflows im Projekt nutzen **eine zentrale virtuelle Umgebung** und **ein gemeinsames `requirements.txt`**. Bei Problemen mit Abhängigkeiten empfiehlt sich das Löschen der `.venv` und erneutes Anlegen wie oben beschrieben.
+
+---
+
+## (WIP!) Appendix 2: 🛠️ Seminar Setup & Workflow
+
+Dieser Abschnitt erklärt Schritt für Schritt, wie **Teilnehmende** das Projekt in einer **identischen, vorkonfigurierten Umgebung** starten – egal ob lokal mit Docker + VS Code oder direkt in GitHub Codespaces. Außerdem enthält er Anweisungen für **Maintainer**, um neue Seminar‑Images zu veröffentlichen.
+
+
+### 1 · Voraussetzungen
+
+| Tool | Mindestversion | Download |
+|------|----------------|----------|
+| **Docker Desktop** (Win / Mac) oder **Docker Engine** (Linux) | ≥ 24.x | <https://docs.docker.com/get-docker/> |
+| **Visual Studio Code** | ≥ 1.90 | <https://code.visualstudio.com/> |
+| VS Code Extension **„Remote – Containers“** | aktuell | `ext install ms-vscode-remote.remote-containers` |
+
+Optional für Cloud‑Nutzung: **GitHub Codespaces** (braucht GitHub‑Team/Org‑Lizenz).
+
+---
+
+### 2 · Schnellstart (lokal)  
+*(empfohlen für Teilnehmende)*
+
+```bash
+# 1 Repository klonen
+git clone https://github.com/bartlmac/portxlpy.git
+cd portxlpy
+
+# 2 VS Code starten
+code .
+# → Pop‑up „Reopen in Container“ anklicken.
+#   VS Code zieht das vorgebaute Image ghcr.io/bartlmac/portxlpy:seminar-202507.
+#
+# 3 Smoke‑Test im VS‑Code‑Terminal (im Container!)
+pytest -q            # Ausgabe: 4 passed
+```
+
+> **Hinweis:** Beim ersten Öffnen lädt Docker ~250 MB; Folge‑Starts dauern Sekunden.
+
+---
+
+### 3 · Alternative A – Nur Container (ohne VS Code)
+
+```bash
+# Image ziehen
+docker pull ghcr.io/bartlmac/portxlpy:seminar-202507
+
+# Standard‑Run (setzt Default‑Parameter)
+docker run --rm ghcr.io/bartlmac/portxlpy:seminar-202507
+
+# Help & CLI‑Parameter anzeigen
+docker run --rm ghcr.io/bartlmac/portxlpy:seminar-202507 --help
+```
+
+---
+
+### 4 · Alternative B – GitHub Codespaces
+
+1. Öffne das Repo im Browser → grüner **„Code“**‑Button → **„Codespaces“** → **„Create codespace on branch…“**  
+2. Branch `seminar-202507` oder `main` auswählen.  
+3. Codespace startet mit **demselben Dev‑Container** – Tests laufen automatisch.
+
+---
+
+### 5 · Authentifizierung bei privaten Images
+
+Falls das GHCR‑Package *private* ist:
+
+```bash
+# Personal Access Token mit Scope `read:packages` erstellen
+echo <GH_PAT> | docker login ghcr.io -u <github‑username> --password-stdin
+```
+
+---
+
+### 6 · Workflow für Maintainer – neues Seminar veröffentlichen
+
+```bash
+# 1 Alle Tests grün? → neuen Tag setzen
+git switch main
+git pull
+git tag -a seminar-202509 -m "Release September‑Seminar"
+git push origin seminar-202509
+
+# 2 CI tut den Rest:
+#   • GitHub Action baut das Image
+#   • pushed es nach ghcr.io/bartlmac/portxlpy:seminar-202509
+#   • README/Einladungs‑Mail anpassen
+```
+
+Die Action befindet sich in `.github/workflows/build-docker.yml` und nutzt den Dockerfile aus `.devcontainer/`.
+
+---
+
+### 7 · Troubleshooting
+
+| Problem | Lösung |
+|---------|--------|
+| **VS Code zeigt „Git not found“ im Container** | Pull das Image neu: `docker rmi ghcr.io/bartlmac/portxlpy:seminar-202507 && docker pull ghcr.io/bartlmac/portxlpy:seminar-202507` |
+| **`ModuleNotFoundError` nach Code‑Änderung** | Container neu bauen: `Remote Containers: Rebuild Container` |
+| **Bild zu groß?** | `docker image prune -a` lokal ausführen; CI optimiert Layer mit `--no-install-recommends`. |
+
+---
+
+### 8 · Aufräumen
+
+```bash
+# Container beenden & löschen
+docker ps -a              # Container‑ID nachschlagen
+docker rm <ID>
+
+# Unbenutzte Images entfernen
+docker image prune -a
+```
 
 ---
 
