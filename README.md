@@ -400,6 +400,6 @@ docker image prune -a
 
 **Kontakt:**  
 *Bartlomiej Maciaga* – <bartlomiej.maciaga@hotmail.com>  
-*Dr. Arno Rasch*      – <arno.rasch@gmx.de>  
+*Dr. Arno Rasch*      – <arno.rasch@vtmw.de>  
 
 Fragen oder Feedback gerne als GitHub‑Issue oder per E‑Mail.
