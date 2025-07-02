@@ -25,6 +25,8 @@ COPY Bartek/input  /app/Bartek/input
 COPY Arno/output   /app/Arno/output
 COPY Arno/input    /app/Arno/input
 
+USER root
+
 # --------- Default Entry Point -------
 ENTRYPOINT ["python", "Bartek/output/run_calc.py"]
     

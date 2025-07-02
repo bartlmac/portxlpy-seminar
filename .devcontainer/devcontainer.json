@@ -1,14 +1,7 @@
 {
   "name": "Portxlpy Seminar",
-  "image": "ghcr.io/bartlmac/portxlpy:seminar-test",
-
-  "extensions": [
-    "ms-python.python",
-    "esbenp.prettier-vscode"
-  ],
-  "settings": {
-    "python.defaultInterpreterPath": "/usr/local/bin/python"
-  },
+  "image": "ghcr.io/bartlmac/portxlpy:seminar-test2",
+  "remoteUser": "root",
   "postCreateCommand": "pytest -q || true",
-  "remoteUser": "root"
+  "extensions": [ "ms-python.python", "esbenp.prettier-vscode" ]
 }
