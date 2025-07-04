@@ -51,6 +51,16 @@ code .
 pytest -q          # Erwartet: 4 passed
 ```
 
+#### Troubleshooting (nur Docker Desktop)
+
+* **Symptom:** VS Code meldet beim *Reopen in Container* `docker inspect … exit 1`  
+  → Ursache: Ein veraltetes Seminar‑Image liegt noch lokal und blockiert den Pull.  
+  **Lösung:**  
+  ```powershell
+  docker rmi ghcr.io/bartlmac/portxlpy:<altes‑Tag>
+  ```
+  Danach *Reopen in Container* erneut ausführen.
+
 ---
 
 ## Kontakt
