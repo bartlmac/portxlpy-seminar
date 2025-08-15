@@ -1,6 +1,6 @@
 {
   "name": "Portxlpy Seminar",
-  "image": "ghcr.io/bartlmac/portxlpy:seminar-test2",
+  "image": "ghcr.io/bartlmac/portxlpy:seminar-test3",
   "remoteUser": "root",
   "postCreateCommand": "pytest -q || true",
   "extensions": [ "ms-python.python", "esbenp.prettier-vscode" ],
