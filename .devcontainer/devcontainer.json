@@ -3,5 +3,6 @@
   "image": "ghcr.io/bartlmac/portxlpy:seminar-test2",
   "remoteUser": "root",
   "postCreateCommand": "pytest -q || true",
-  "extensions": [ "ms-python.python", "esbenp.prettier-vscode" ]
+  "extensions": [ "ms-python.python", "esbenp.prettier-vscode" ],
+  "settings": { "remote.autoForwardPorts": false }
 }
