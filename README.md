@@ -372,11 +372,18 @@ Die Action befindet sich in `.github/workflows/build-docker.yml` und nutzt den D
 
 ### 7 · Troubleshooting
 
-| Problem | Lösung |
-|---------|--------|
-| **VS Code zeigt „Git not found“ im Container** | Pull das Image neu: `docker rmi ghcr.io/bartlmac/portxlpy:seminar-202507 && docker pull ghcr.io/bartlmac/portxlpy:seminar-202507` |
-| **`ModuleNotFoundError` nach Code‑Änderung** | Container neu bauen: `Remote Containers: Rebuild Container` |
-| **Bild zu groß?** | `docker image prune -a` lokal ausführen; CI optimiert Layer mit `--no-install-recommends`. |
+| Problem                                         | Lösung                                                                                                                                        |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **„Workspace does not exist“**                  | Compose-Volume fehlt. In `.devcontainer/docker-compose.yml` sicherstellen: `volumes: - ..:/workspace:cached` → **Rebuild Container**.         |
+| **VS Code meldet „Git not found“ im Container** | Falsches/zu altes Image. `docker rmi ghcr.io/bartlmac/portxlpy:<tag> && docker pull ghcr.io/bartlmac/portxlpy:<tag>` → **Rebuild Container**. |
+| **`ModuleNotFoundError` nach Code-Änderung**    | **F1 → Dev Containers: Rebuild Container** (baut neu, installiert Abhängigkeiten).                                                            |
+| **Container beendet sich sofort**               | ENTRYPOINT läuft durch. Mit Compose bereits gelöst; sonst beim Testen starten mit `--entrypoint /bin/bash -c "tail -f /dev/null"`.            |
+| **Auto-Port-Forward-Popup (Port 4594)**         | In `.devcontainer/devcontainer.json`: `"portsAttributes": { "4594": { "onAutoForward": "ignore" } }"`.                                        |
+| **Neues Tag wird nicht gepullt**                | Altes lokales Image blockiert. `docker rmi ghcr.io/bartlmac/portxlpy:<tag>` danach `docker pull ghcr.io/bartlmac/portxlpy:<tag>`.             |
+| **`docker` im Container nicht gefunden**        | Docker-Befehle **auf dem Host** ausführen (PowerShell/Terminal). Optional: Feature `docker-outside-of-docker` nutzen.                         |
+| **„name is already in use“**                    | Vorhandenen Container löschen/umbenennen: `docker rm -f portxlpy-seminar` oder `docker rename <alt> portxlpy-seminar`.                        |
+| **Bild belegt viel Platz**                      | Unbenötigte Images entfernen: `docker image prune -a` *(Vorsicht: löscht alle ungenutzten Images!)*                                           |
+
 
 ---
 

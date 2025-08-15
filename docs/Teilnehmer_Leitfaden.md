@@ -43,7 +43,8 @@ code .
 ```
 
 *In VS Code:* **F1 ▸ “Dev Containers: Reopen in Container”**  
-→ Image `ghcr.io/bartlmac/portxlpy:seminar-202507` wird geladen.
+→ Image `ghcr.io/bartlmac/portxlpy:seminar-202507` wird geladen.  
+→ Container **portxl-seminar** startet automatisch, Workspace = `/workspace` wird automatisch gesetzt.  
 
 ### 3 · Smoke‑Test
 
