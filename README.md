@@ -384,8 +384,12 @@ Die Action befindet sich in `.github/workflows/build-docker.yml` und nutzt den D
 
 ```bash
 # Container beenden & löschen
-docker ps -a              # Container‑ID nachschlagen
-docker rm <ID>
+docker ps -a                                 # Container‑ID nachschlagen
+docker ps -a \
+  --format "table {{.Names}}\t{{.ID}}\t{{.Status}}"
+                                             # (optional) oder so aufgehübscht
+docker stop <ID>                             # Zuerst stoppen (ID oder Name, beides geht)
+docker rm <ID>                               # Löschen (dito)
 
 # Unbenutzte Images entfernen
 docker image prune -a
