@@ -1,11 +1,11 @@
 import sys
 import pathlib
 
-#  …/Arno/output in sys.path legen, damit compare_results importierbar ist
+#  …/Arno/output in sys.path legen, damit vergleich importierbar ist
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
-import compare_results
+import vergleich
 
 def test_compare_results_no_diff():
     """Excel- und Python-Werte müssen identisch sein."""
-    assert compare_results.main() is True
+    assert vergleich.main() == 0

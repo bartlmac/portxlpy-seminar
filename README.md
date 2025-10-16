@@ -77,8 +77,8 @@ Idee: Da das Modell keine Excel-Datei verarbeiten kann, werden die Bestandteile 
 | ------- | ------------ | ------------- | ---------------- |
 | 1       | Tafeln aus Excel in eine XML-Datei überführen (ganzer Inhalt des Blattes `Tafeln` per Copy&Paste an ChatGPT). | Chat 1 - Excel_nach_XML_konvertieren | `Tafeln.xml` |
 | 2       | VBA-Module (`mConstants`, `mBarwerte`, `mGwerte`) nach Python übersetzen; Excel-Rundungsregeln beibehalten. | Chat 2 - VBA_nach_Python_übersetzen | `constants.py` `barwerte.py` `gwerte.py` |
-| 3       | Tabellenblatt `Kalkulation` als CLI-Programm abbilden (Screenshot + Formeln als Text). | Chat 3 - Excel-Tarifrechner_nach_Python_mit_QS (Prompts 1–9) | `verlaufswerte.py` `tarifrechner.py` |
-| 4       | Wertevergleich Excel ↔ Python. |  Chat 3 - Excel-Tarifrechner_nach_Python_mit_QS (Prompts 10–13) | `compare_results.py` |
+| 3       | Tabellenblatt `Kalkulation` als CLI-Programm abbilden (Screenshot + Formeln als Text). | Chat 3 - Excel-Tarifrechner_nach_Python_mit_QS (Prompts 5–7) | `beitrag_und_verlaufswerte.py` `tarifrechner.py` |
+| 4       | Wertevergleich Excel ↔ Python. |  Chat 3 - Excel-Tarifrechner_nach_Python_mit_QS (Prompt 8) | `vergleich.py` |
 
 ---
 

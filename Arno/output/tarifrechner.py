@@ -1,143 +1,182 @@
-import openpyxl
+# main.py
+# -*- coding: utf-8 -*-
+
+import sys
 import os
 from pathlib import Path
+from typing import Any, Optional
 
-THIS_DIR    = Path(__file__).resolve().parent      # …/Arno/output
-PROJECT_DIR = THIS_DIR.parent                      # …/Arno
-INPUT_DIR   = PROJECT_DIR / "input"
-os.chdir(str(THIS_DIR))                            # CWD = output
+from openpyxl import load_workbook 
 
-from barwerte import act_ngr_ax, act_axn_k
-from gwerte import act_dx
-
-from verlaufswerte import (
-    calc_Axn,
-    calc_axn,
-    calc_axt,
-    calc_kVx_bpfl,
-    calc_kDRx_bpfl,
-    calc_kVx_bfr,
-    calc_kVx_MRV,
-    calc_flex_phase,
-    calc_StoAb,
-    calc_RKW,
-    calc_VS_bfr
+# Dein Modul aus dem vorherigen Schritt:
+from beitrag_und_verlaufswerte import (
+    TarifInput,
+    beitragsberechnung,
+    verlaufswerte,
 )
 
-def calc_Bxt(x, n, t, sex, tafel, zins, alpha, beta1, gamma1, gamma2):
-    numerator = (
-        act_ngr_ax(x, n, sex, tafel, zins)
-        + act_dx(x + n, sex, tafel, zins) / act_dx(x, sex, tafel, zins)
-        + gamma1 * act_axn_k(x, t, sex, tafel, zins, 1)
-        + gamma2 * (
-            act_axn_k(x, n, sex, tafel, zins, 1)
-            - act_axn_k(x, t, sex, tafel, zins, 1)
-        )
+THIS_DIR   = Path(__file__).resolve().parent        # …/Arno/output
+INPUT_DIR  = THIS_DIR.parent / "input"              # …/Arno/input
+os.chdir(str(THIS_DIR))                            # CWD = output
+
+EXCEL_PATH_DEFAULT = INPUT_DIR / "Tarifrechner_KLV.xlsm"
+SHEET_NAME = "Kalkulation"
+
+
+# ---------------------- Excel-Utilities ----------------------
+
+def _norm_text(v: Any) -> str:
+    return str(v).strip() if v is not None else ""
+
+def _parse_number_de(v: Any) -> float:
+    """
+    Robust gegen deutsche Formatierung (Punkt = Tausender, Komma = Dezimal),
+    sowie gegen Suffixe wie '€' und '%'.
+    """
+    if v is None:
+        return 0.0
+    if isinstance(v, (int, float)):
+        return float(v)
+
+    s = str(v).strip()
+    if s == "":
+        return 0.0
+
+    # Entferne Währungs-/Prozent-/Leerzeichen
+    s = (
+        s.replace("€", "")
+         .replace("%", "")
+         .replace(" ", "")
+         .replace("\xa0", "")   # NBSP
     )
-    denominator = (
-        (1 - beta1) * act_axn_k(x, t, sex, tafel, zins, 1)
-        - alpha * t
-    )
-    return numerator / denominator
+    # Tausenderpunkte raus, Dezimalkomma -> Punkt
+    s = s.replace(".", "").replace(",", ".")
+    try:
+        return float(s)
+    except ValueError:
+        # Falls doch nicht numerisch (z. B. 'DAV1994_T'), zurück 0.0
+        return 0.0
 
-def calc_BJB(VS, Bxt_value):
-    return VS * Bxt_value
+def find_right_value(ws, label: str) -> Optional[Any]:
+    """
+    Sucht im gesamten Blatt nach einer Zelle mit exakt `label`
+    (nach Trim), und liefert den Wert der Zelle rechts daneben (gleiche Zeile, +1 Spalte).
+    """
+    target = label.strip()
+    for row in ws.iter_rows():
+        for cell in row:
+            if _norm_text(cell.value) == target:
+                right = ws.cell(row=cell.row, column=cell.column + 1)
+                return right.value
+    return None
 
-def calc_BZB(ratzu, zw, BJB_value, k_val):
-    return (1 + ratzu) / zw * (BJB_value + k_val)
+def get_string(ws, label: str) -> str:
+    v = find_right_value(ws, label)
+    return "" if v is None else str(v).strip()
 
-def calc_Pxt(x, n, t, sex, tafel, zins, alpha, Bxt_value):
-    numerator = (
-        act_ngr_ax(x, n, sex, tafel, zins)
-        + act_dx(x + n, sex, tafel, zins) / act_dx(x, sex, tafel, zins)
-        + t * alpha * Bxt_value
-    )
-    denominator = act_axn_k(x, t, sex, tafel, zins, 1)
-    return numerator / denominator
+def get_number(ws, label: str) -> float:
+    v = find_right_value(ws, label)
+    return _parse_number_de(v)
 
-def main():
-    excel_file = INPUT_DIR / "Tarifrechner_KLV.xlsm"
-    wb = openpyxl.load_workbook(excel_file, data_only=True)
-    sheet = wb["Kalkulation"]
 
-    # Eingabedaten (Zeilen 4..9 in Spalte B usw.)
-    x            = sheet["B4"].value
-    sex          = sheet["B5"].value
-    n            = sheet["B6"].value
-    t            = sheet["B7"].value
-    VS           = sheet["B8"].value
-    zw           = sheet["B9"].value
+# ---------------------- Hauptlogik ----------------------
 
-    # Tarifdaten (Spalte E, Zeilen 4..12)
-    zins         = sheet["E4"].value
-    tafel        = sheet["E5"].value
-    alpha        = sheet["E6"].value
-    beta1        = sheet["E7"].value
-    gamma1       = sheet["E8"].value
-    gamma2       = sheet["E9"].value
-    gamma3       = sheet["E10"].value
-    k_val        = sheet["E11"].value
-    ratzu        = sheet["E12"].value
+def read_inputs_from_excel(xlsm_path: str | Path) -> TarifInput:
+    wb = load_workbook(filename=xlsm_path, data_only=True, read_only=True, keep_vba=True)
+    if SHEET_NAME not in wb.sheetnames:
+        raise ValueError(f"Tabellenblatt '{SHEET_NAME}' nicht gefunden.")
 
-    # Grenzen in Spalte H (z.B. Zeilen 4 und 5)
-    MinAlterFlex = sheet["H4"].value  # z.B. 60
-    MinRLZFlex   = sheet["H5"].value  # z.B. 5
+    ws = wb[SHEET_NAME]
+
+    # Vertragsdaten
+    x      = int(get_number(ws, "x"))
+    sex    = get_string(ws, "Sex") or "M"
+    n      = int(get_number(ws, "n"))
+    t      = int(get_number(ws, "t"))
+    VS     = get_number(ws, "VS")
+    zw     = int(get_number(ws, "zw"))
+
+    # Tarifdaten
+    zins   = get_number(ws, "Zins") / 100.0 if "%" in str(find_right_value(ws, "Zins")) else get_number(ws, "Zins")
+    tafel  = get_string(ws, "Tafel")
+    alpha  = get_number(ws, "alpha")  / 100.0 if "%" in str(find_right_value(ws, "alpha"))  else get_number(ws, "alpha")
+    beta1  = get_number(ws, "beta1")  / 100.0 if "%" in str(find_right_value(ws, "beta1"))  else get_number(ws, "beta1")
+    gamma1 = get_number(ws, "gamma1") / 100.0 if "%" in str(find_right_value(ws, "gamma1")) else get_number(ws, "gamma1")
+    gamma2 = get_number(ws, "gamma2") / 100.0 if "%" in str(find_right_value(ws, "gamma2")) else get_number(ws, "gamma2")
+    gamma3 = get_number(ws, "gamma3") / 100.0 if "%" in str(find_right_value(ws, "gamma3")) else get_number(ws, "gamma3")
+    k      = get_number(ws, "k")
+    ratzu  = get_number(ws, "ratzu") / 100.0 if "%" in str(find_right_value(ws, "ratzu")) else get_number(ws, "ratzu")
+
+    # Grenzen
+    MinAlterFlex = int(get_number(ws, "MinAlterFlex"))
+    MinRLZFlex   = int(get_number(ws, "MinRLZFlex"))
 
     wb.close()
 
-    # --- Beitragsberechnung ---
-    Bxt_value = calc_Bxt(x, n, t, sex, tafel, zins, alpha, beta1, gamma1, gamma2)
-    BJB_value = calc_BJB(VS, Bxt_value)
-    BZB_value = calc_BZB(ratzu, zw, BJB_value, k_val)
-    Pxt_value = calc_Pxt(x, n, t, sex, tafel, zins, alpha, Bxt_value)
+    return TarifInput(
+        x=x, sex=sex, n=n, t=t, VS=VS, zw=zw,
+        zins=zins, tafel=tafel, alpha=alpha, beta1=beta1,
+        gamma1=gamma1, gamma2=gamma2, gamma3=gamma3,
+        k=k, ratzu=ratzu,
+        MinAlterFlex=MinAlterFlex, MinRLZFlex=MinRLZFlex
+    )
 
-    print("=== Beitragsberechnung ===")
-    print(f"Bxt = {Bxt_value:12.8f}")
-    print(f"BJB = {BJB_value:12.2f}")
-    print(f"BZB = {BZB_value:12.2f}")
-    print(f"Pxt = {Pxt_value:12.8f}")
-    print()
 
-    # --- Verlaufswerte ---
-    print("=== Verlaufswerte (k = 0..n) ===")
-    print("k\tAxn\t\taxn\t\taxt\t\tkVx_bpfl\tkDRx_bpfl\tkVx_bfr\t\tkVx_MRV\t\tflexPh\tStoAb\t\tRKW\t\tVS_bfr")
+def format_eur(x: float) -> str:
+    return f"{x:,.2f} €".replace(",", "X").replace(".", ",").replace("X", ".")
 
-    for k in range(n + 1):
-        Axn_val       = calc_Axn(k, x, n, sex, tafel, zins)
-        axn_val       = calc_axn(k, x, n, sex, tafel, zins)
-        axt_val       = calc_axt(k, x, t, sex, tafel, zins)
-        kVx_bpfl_val  = calc_kVx_bpfl(k, x, n, t, sex, tafel, zins, Pxt_value, gamma2)
-        kDRx_bpfl_val = calc_kDRx_bpfl(k, x, n, t, sex, tafel, zins, Pxt_value, gamma2, VS)
-        kVx_bfr_val   = calc_kVx_bfr(k, x, n, t, sex, tafel, zins, gamma3)
-        kVx_MRV_val   = calc_kVx_MRV(k, x, n, t, sex, tafel, zins, alpha, BJB_value,
-                                     Pxt_value, gamma2, VS)
-        flex_val      = calc_flex_phase(k, x, n, MinAlterFlex, MinRLZFlex)
-        StoAb_val     = calc_StoAb(k, x, n, t, sex, tafel, zins,
-                                   Pxt_value, gamma2, VS,
-                                   alpha, BJB_value,
-                                   MinAlterFlex, MinRLZFlex)
-        RKW_val       = calc_RKW(k, x, n, t, sex, tafel, zins,
-                                 Pxt_value, gamma2, VS,
-                                 alpha, BJB_value,
-                                 MinAlterFlex, MinRLZFlex)
-        VS_bfr_val    = calc_VS_bfr(k, x, n, t, sex, tafel, zins,
-                                    Pxt_value, gamma2, gamma3, VS,
-                                    alpha, BJB_value,
-                                    MinAlterFlex, MinRLZFlex)
+def format_num(x: float, digits: int = 6) -> str:
+    return f"{x:.{digits}f}".replace(".", ",")
 
-        print(f"{k}\t"
-              f"{Axn_val:10.6f}\t"
-              f"{axn_val:10.6f}\t"
-              f"{axt_val:10.6f}\t"
-              f"{kVx_bpfl_val:10.6f}\t"
-              f"{kDRx_bpfl_val:10.2f}\t"
-              f"{kVx_bfr_val:10.6f}\t"
-              f"{kVx_MRV_val:10.2f}\t"
-              f"{flex_val}\t"
-              f"{StoAb_val:10.2f}\t"
-              f"{RKW_val:10.2f}\t"
-              f"{VS_bfr_val:10.2f}"
-        )
+def print_results(inp: TarifInput):
+    # Beitragsberechnung
+    beitr = beitragsberechnung(inp)
+    print("\n=== Beitragsberechnung ===")
+    print(f"Bxt: {format_num(beitr['Bxt'], 8)}")
+    print(f"BJB: {format_eur(beitr['BJB'])}")
+    print(f"BZB: {format_eur(beitr['BZB'])}")
+    print(f"Pxt: {format_num(beitr['Pxt'], 8)}")
+
+    # Verlaufswerte
+    print("\n=== Verlaufswerte ===")
+    header = [
+        "k", "Axn", "axn", "axt", "kVx_bpfl", "kDRx_bpfl",
+        "kVx_bfr", "kVx_MRV", "flex.Phase", "StoAb", "RKW", "VS_bfr"
+    ]
+    print("; ".join(header))
+
+    rows = verlaufswerte(inp)  # bis max(n,t)
+    for r in rows:
+        line = [
+            str(r["k"]),
+            format_num(r["Axn"], 6),
+            format_num(r["axn"], 6),
+            format_num(r["axt"], 6),
+            format_num(r["kVx_bpfl"], 6),
+            format_eur(r["kDRx_bpfl"]),
+            format_num(r["kVx_bfr"], 6),
+            format_eur(r["kVx_MRV"]),
+            str(r["flex_phase"]),
+            format_eur(r["StoAb"]),
+            format_eur(r["RKW"]),
+            format_eur(r["VS_bfr"]) if r["VS_bfr"] >= 1000 else format_num(r["VS_bfr"], 2),
+        ]
+        print("; ".join(line))
+
+
+def main():
+    path = Path(EXCEL_PATH_DEFAULT)
+    if len(sys.argv) > 1:
+        path = Path(sys.argv[1])
+
+    if not path.exists():
+        sys.stderr.write(f"Datei nicht gefunden: {path}\n")
+        sys.stderr.write("Aufruf: python main.py [Pfad/zur/Tarifrechner_KLV.xlsm]\n")
+        sys.exit(1)
+
+    inp = read_inputs_from_excel(path)
+    print_results(inp)
+
 
 if __name__ == "__main__":
     main()
