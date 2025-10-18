@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 import sys, math
 import os
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional, Union
 from openpyxl import load_workbook
 
 from beitrag_und_verlaufswerte import (
@@ -178,11 +178,12 @@ def cmp(name: str, calc: float, exp: float, money=False,
     return False, f"[DIFF] {name}: calc={calc:.10f}{suf} excel={exp:.10f}{suf} Δ={calc-exp:.10f}{suf}"
 
 # ---------- Main ----------
-def main() -> int:
-    path = Path(EXCEL_PATH_DEFAULT if len(sys.argv) < 2 else sys.argv[1])
+def main(xlsm_path: Optional[Union[str, Path]] = None) -> int:
+    # Kein Zugriff auf sys.argv hier!
+    path = Path(EXCEL_PATH_DEFAULT) if xlsm_path is None else Path(xlsm_path)
     if not path.exists():
         sys.stderr.write(f"Datei nicht gefunden: {path}\n")
-        sys.stderr.write("Aufruf: python validate_exact_cells.py [Pfad/zur/Tarifrechner_KLV.xlsm]\n")
+        sys.stderr.write("Aufruf: python vergleich.py [Pfad/zur/Tarifrechner_KLV.xlsm]\n")
         return 1
 
     ti = read_inputs(path)
